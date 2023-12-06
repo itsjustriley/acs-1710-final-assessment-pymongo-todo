@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlaskApp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+    <h1>FlaskTODO</h1>
+	<hr>
+	<div class="content">
+		<form action="/" method="post">
+			<p>
+				<label>Todo:
+                    <input type="text" name="content" placeholder="Todo Content">
+        </label>
+			</p>
+
+			<div>
+        <p>Priority:</p>
+
+            <p><label>
+            <input name="priority" required type="radio" value="Important">
+            Important</label></p>
+
+            <p><label>
+            <input name="priority" required type="radio" value="Normal">
+            Normal</label></p>
+            
+            <p><label>
+            <input name="priority" required type="radio" value="Unimportant">
+            Unimportant</label></p>
+				
+        </div>
+
+			<p><button type="submit">Submit</button></p>
+		</form>
+        <hr>
+        {% for todo in todos %}
+            <div class="todo">
+                <div class="task">
+                    <form method="POST" action="{{ '/' ~ todo._id ~ '/complete/' }}">
+                        <input type="hidden" name="completion" value="{% if todo.complete %}true{% else %}false{% endif %}">
+                        <input onchange="this.form.submit()" type="checkbox" name="toggle" {% if todo.complete  %}checked{% endif %}>
+                    </form>
+                    <p class="{{ todo.priority }}">{{ todo.content }} <em>({{ todo.priority }})</em></p>
+                </div>
+                <div>
+                    <p class="date">{{ todo.date.strftime('%d %b')}}</p>
+                    <form method="POST" class = "delete" action="{{ '/' ~ todo._id ~ '/delete/'  }}">
+                        <input 
+                            type="submit" 
+                            value="Delete Todo" 
+                            onclick="return confirm('Are you sure you want to delete this entry?')">
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+	</div>
+</body>
+<script>
+    document.querySelectorAll('input[type=checkbox]').forEach(function(checkbox) {
+        checkbox.addEventListener('click', function(event) {
+            event.preventDefault();
+        });
+    });
+    </script>
+</html>
